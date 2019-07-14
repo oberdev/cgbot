@@ -1,4 +1,9 @@
 from telegram.ext import Updater
+from dotenv import load_dotenv
+import os
 
-updater: Updater = Updater(token='748760698:AAGSq0tlk-ETQ79srfAwKBxUcSbGS9gNzBE')
+load_dotenv()
+
+updater: Updater = Updater(
+    token=os.getenv('TOKEN'))
 dispatcher = updater.dispatcher
