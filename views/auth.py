@@ -60,5 +60,5 @@ def auth_validation(bot: Bot, update: Updater, user_data: dict):
     else:
         del user_data['username']
         del user_data['password']
-        app_user_view(bot, update, user_data)
+        app_user_view(bot, update)
         return APP_MENU_CASES

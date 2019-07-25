@@ -23,7 +23,6 @@ class CGApiClient(object):
             "username": username,
             "password": password
         })
-        print(result.headers)
         if result.status_code == 401:
             return {'error': result.json()['message']}
         else:
@@ -36,5 +35,10 @@ class CGApiClient(object):
     def token_refresh(self):
         pass
 
+    def get_hierarchy(self):
+        results = self.api.get(f'{self.url}/user/objects/hierarchy')
+        return results.json()
 
-GCApi = CGApiClient()
+    def get_recently_params(self, uuid):
+        results = self.api.get(f'{self.url}/user/box/{uuid}/last_measures')
+        return results.json()
