@@ -13,6 +13,12 @@ markup = ReplyKeyboardMarkup(button_list)
 box_actions_list = ['Recently indicators', 'Plot']
 
 
+def chunks(l, n):
+    """Yield successive n-sized chunks from l."""
+    for i in range(0, len(l), n):
+        yield l[i:i + n]
+
+
 def app_user_view(bot: Bot, updater: Updater):
     bot.send_message(
         chat_id=updater.message.chat_id,
@@ -30,11 +36,13 @@ def app_empty_view(bot: Bot, updater: Updater):
 
 
 def app_buildings_view(bot: Bot, updater: Updater, user_data: dict):
+    buildings_keyboard = list(chunks([KeyboardButton(
+        text=building['address']) for building in user_data['hierarchy']['buildings']], 3))
+    buildings_keyboard.append([KeyboardButton(text='Back')])
     bot.send_message(
         chat_id=updater.message.chat_id,
         text="Choose building",
-        reply_markup=ReplyKeyboardMarkup(
-            [[KeyboardButton(text=building['address']) for building in user_data['hierarchy']['buildings']], [KeyboardButton(text='Back')]])
+        reply_markup=ReplyKeyboardMarkup(buildings_keyboard)
     )
     return APP_BUILDINGS_CASES
 
@@ -56,22 +64,26 @@ def app_building_view(bot: Bot, updater: Updater, user_data: dict):
 
 
 def app_rooms_view(bot: Bot, updater: Updater, user_data: dict):
+    rooms_keyboard = list(chunks([KeyboardButton(
+        text=room['name']) for room in user_data['active_building']['rooms']], 3))
+    rooms_keyboard.append([KeyboardButton(text='Back')])
     bot.send_message(
         chat_id=updater.message.chat_id,
         text="Choose room",
-        reply_markup=ReplyKeyboardMarkup(
-            [[KeyboardButton(text=room['name']) for room in user_data['active_building']['rooms']], [KeyboardButton(text='Back')]])
+        reply_markup=ReplyKeyboardMarkup(rooms_keyboard)
     )
     return APP_ROOMS_CASES
 
 
 def app_boxes_view(bot: Bot, updater: Updater, user_data: dict, key='active_building'):
     user_data['boxes'] = [box['uuid'] for box in user_data[key]['boxes']]
+    boxes_keyboard = list(chunks([KeyboardButton(text=box)
+                                  for box in user_data['boxes']], 3))
+    boxes_keyboard.append([KeyboardButton(text='Back')])
     bot.send_message(
         chat_id=updater.message.chat_id,
         text="Choose box",
-        reply_markup=ReplyKeyboardMarkup(
-            [[KeyboardButton(text=box) for box in user_data['boxes']], [KeyboardButton(text='Back')]])
+        reply_markup=ReplyKeyboardMarkup(boxes_keyboard)
     )
     return APP_BOXES_CASES
 
