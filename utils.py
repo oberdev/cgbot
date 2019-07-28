@@ -4,6 +4,8 @@ from views_codes import APP_BUILDINGS_CASES, APP_BUILDING_CASES, APP_BOXES_CASES
 
 main_menu_buttons = ["Buildings", "Settings"]
 
+BUTTON_IN_ROW = 2
+
 button_list = [
     [KeyboardButton(text=button_text) for button_text in main_menu_buttons]
 ]
@@ -37,7 +39,7 @@ def app_empty_view(bot: Bot, updater: Updater):
 
 def app_buildings_view(bot: Bot, updater: Updater, user_data: dict):
     buildings_keyboard = list(chunks([KeyboardButton(
-        text=building['address']) for building in user_data['hierarchy']['buildings']], 3))
+        text=building['address']) for building in user_data['hierarchy']['buildings']], BUTTON_IN_ROW))
     buildings_keyboard.append([KeyboardButton(text='Back')])
     bot.send_message(
         chat_id=updater.message.chat_id,
@@ -65,7 +67,7 @@ def app_building_view(bot: Bot, updater: Updater, user_data: dict):
 
 def app_rooms_view(bot: Bot, updater: Updater, user_data: dict):
     rooms_keyboard = list(chunks([KeyboardButton(
-        text=room['name']) for room in user_data['active_building']['rooms']], 3))
+        text=room['name']) for room in user_data['active_building']['rooms']], BUTTON_IN_ROW))
     rooms_keyboard.append([KeyboardButton(text='Back')])
     bot.send_message(
         chat_id=updater.message.chat_id,
@@ -78,7 +80,7 @@ def app_rooms_view(bot: Bot, updater: Updater, user_data: dict):
 def app_boxes_view(bot: Bot, updater: Updater, user_data: dict, key='active_building'):
     user_data['boxes'] = [box['uuid'] for box in user_data[key]['boxes']]
     boxes_keyboard = list(chunks([KeyboardButton(text=box)
-                                  for box in user_data['boxes']], 3))
+                                  for box in user_data['boxes']], BUTTON_IN_ROW))
     boxes_keyboard.append([KeyboardButton(text='Back')])
     bot.send_message(
         chat_id=updater.message.chat_id,
@@ -105,10 +107,15 @@ def mock_view(bot: Bot, updater: Updater, user_data: dict):
     )
 
 
+def build_response(recently_params, previous_params):
+    pass
+
+
 def app_box_recently_params(bot: Bot, update: Updater, user_data: dict):
-    params = user_data['api'].get_recently_params(user_data['active_box'])
+    recently_params, previous_params = user_data['api'].get_recently_params_with_previous(
+        user_data['active_box'])
     bot.send_message(
         chat_id=update.message.chat_id,
         text='\n'.join(
-            [f'{key}: {value}' for key, value in params.items()]),
+            [f'{key}: {value}' for key, value in recently_params.items()]),
     )

@@ -48,7 +48,6 @@ def auth_validation(bot: Bot, update: Updater, user_data: dict):
     user_data['api'] = CGApiClient()
     auth_result = user_data['api'].token_obtain(
         user_data['username'], user_data['password'])
-    print(auth_result)
     if 'error' in auth_result:
         bot.send_message(
             chat_id=update.message.chat_id,
