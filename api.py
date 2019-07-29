@@ -48,6 +48,10 @@ class CGApiClient(object):
             f'{self.url}/user/box/{uuid}/measures/since/{startstamp}/till/{endstamp}')
         return results.json()
 
+    def get_group_for_box(self, uuid):
+        results = self.api.get(f'{self.url}/user/box/{uuid}/profile')
+        return results.json()
+
     def get_recently_params_with_previous(self, uuid):
         recently_params: dict = self.get_recently_params(uuid)
         if 'code' in recently_params and recently_params['code'] == 404:
