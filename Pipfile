@@ -11,6 +11,7 @@ pylint = "*"
 python-telegram-bot = "*"
 requests = "*"
 python-dotenv = "*"
+emoji = "*"
 
 [requires]
 python_version = "3.7"
