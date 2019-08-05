@@ -113,7 +113,8 @@ class CGApiClient(object):
 
     def get_recently_params_with_previous(self, uuid):
         recently_params: dict = self.get_recently_params(uuid)
-        if 'code' in recently_params and recently_params['code'] == 404:
+        print(recently_params['code'])
+        if 'code' in recently_params and (recently_params['code'] == 404 or recently_params['code'] == 403):
             return None, None
         else:
             previous_params = self.get_params_in_interval(
