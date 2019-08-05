@@ -182,7 +182,7 @@ def _get_level_emoji(param: float, group_node: dict or list):
         for value, _ in temp_list[::-1]:
             if value < param:
                 return individual_scale[value]
-        return emoji_list[0]
+        return emoji_list[-1]
     elif type(group_node) is list:
         values_list = group_node
         emoji_list = [EMOJI['colors'][key] for key in COLORS_LIST]
