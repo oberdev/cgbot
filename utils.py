@@ -176,7 +176,7 @@ def _get_level_emoji(param: float, group_node: dict or list):
     if type(group_node) is dict:
         values_list = [value for value in group_node.values()]
         emoji_list = [EMOJI['colors'][key]
-                      for key in REVERSE_COLORS_LIST[::-1]]
+                      for key in REVERSE_COLORS_LIST]
         individual_scale = dict(zip(values_list, emoji_list))
         temp_list = list(individual_scale.items())
         for value, _ in temp_list[::-1]:
@@ -245,3 +245,4 @@ def app_plotting_view(bot: Bot, update: Updater, user_data: dict):
         chat_id=update.message.chat_id,
         text=f'{user_data["end_date"]} {user_data["start_date"]}',
     )
+    return app_box_view(bot, update, user_data)
