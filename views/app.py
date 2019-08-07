@@ -1,6 +1,7 @@
 from telegram import Bot, Update
-from utils import app_empty_view, main_menu_buttons, app_buildings_view, app_user_view, app_building_view, app_rooms_view, app_boxes_view, app_box_view, app_boxes_view, mock_view, box_actions_list, app_box_recently_params
+from utils import app_empty_view, main_menu_buttons, app_buildings_view, app_user_view, app_building_view, app_rooms_view, app_boxes_view, app_box_view, app_boxes_view, mock_view, box_actions_list, app_box_recently_params, app_box_first_date, app_box_second_date, app_plotting_view, app_box_view
 from views_codes import APP_MENU_CASES, APP_BUILDINGS_CASES
+import datetime
 
 
 def app_main_menu(bot: Bot, update: Update, user_data: dict):
@@ -70,4 +71,36 @@ def app_box_actions(bot: Bot, update: Update, user_data: dict):
     elif update.message.text == box_actions_list[0]:
         app_box_recently_params(bot, update, user_data)
     elif update.message.text == box_actions_list[1]:
-        return mock_view(bot, update, user_data)
+        return app_box_first_date(bot, update, user_data)
+
+
+def app_box_first_date_handler(bot: Bot, update: Update, user_data: dict):
+    if update.message.text == 'Cancel':
+        return app_box_view(bot, update, user_data)
+    else:
+        try:
+            user_data['date_start'] = datetime.datetime.strptime(
+                update.message.text, "%d/%m/%y")
+        except ValueError:
+            bot.send_message(
+                chat_id=update.message.chat_id,
+                text='Invalid Date, try another or cancel'
+            )
+        else:
+            return app_box_second_date(bot, update, user_data)
+
+
+def app_box_second_date_handler(bot: Bot, update: Update, user_data: dict):
+    if update.message.text == 'Cancel':
+        return app_box_view(bot, update, user_data)
+    else:
+        try:
+            user_data['date_end'] = datetime.datetime.strptime(
+                update.message.text, "%d/%m/%y")
+        except ValueError:
+            bot.send_message(
+                chat_id=update.message.chat_id,
+                text='Invalid Date, try another or cancel'
+            )
+        else:
+            return app_plotting_view(bot, update, user_data)

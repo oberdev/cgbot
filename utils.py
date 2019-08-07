@@ -1,6 +1,6 @@
 from telegram.ext import Updater
 from telegram import Bot, KeyboardButton, ReplyKeyboardMarkup
-from views_codes import APP_BUILDINGS_CASES, APP_BUILDING_CASES, APP_BOXES_CASES, APP_ROOMS_CASES, APP_BOX_ACTIONS
+from views_codes import APP_BUILDINGS_CASES, APP_BUILDING_CASES, APP_BOXES_CASES, APP_ROOMS_CASES, APP_BOX_ACTIONS, APP_BOX_FIRST_DATE_HANDLE, APP_BOX_SECOND_DATE_HANDLE
 from datetime import datetime
 
 main_menu_buttons = ["Buildings", "Settings"]
@@ -219,4 +219,29 @@ def app_box_recently_params(bot: Bot, update: Updater, user_data: dict):
         chat_id=update.message.chat_id,
         text=build_response(recently_params, previous_params,
                             user_data['api'].get_group_for_box(user_data['active_box'])),
+    )
+
+
+def app_box_first_date(bot: Bot, update: Updater, user_data: dict):
+    bot.send_message(
+        chat_id=update.message.chat_id,
+        text='Please enter start date in format DD/MM/YY',
+        reply_markup=ReplyKeyboardMarkup([[KeyboardButton(text='Cancel')]])
+    )
+    return APP_BOX_FIRST_DATE_HANDLE
+
+
+def app_box_second_date(bot: Bot, update: Updater, user_data: dict):
+    bot.send_message(
+        chat_id=update.message.chat_id,
+        text='Please enter end date in format DD/MM/YY',
+        reply_markup=ReplyKeyboardMarkup([[KeyboardButton(text='Cancel')]])
+    )
+    return APP_BOX_SECOND_DATE_HANDLE
+
+
+def app_plotting_view(bot: Bot, update: Updater, user_data: dict):
+    bot.send_message(
+        chat_id=update.message.chat_id,
+        text=f'{user_data["end_date"]} {user_data["start_date"]}',
     )
