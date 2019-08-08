@@ -89,7 +89,16 @@ class CGApiClient(object):
             return data
 
     def token_refresh(self):
-        pass
+        result = self.api.post(f'{self.url}/user/token/refresh', json={
+            'refresh_token': self.refresh_token
+        })
+        if result.status_code == 401:
+            return False
+        elif result.status_code == 200:
+            result = result.json()
+            self.token = result['token']
+            self.api.headers['Authorization'] = f'Bearer {self.token}'
+            return True
 
     def get_hierarchy(self):
         results = self.api.get(f'{self.url}/user/objects/hierarchy')
@@ -113,9 +122,16 @@ class CGApiClient(object):
 
     def get_recently_params_with_previous(self, uuid):
         recently_params: dict = self.get_recently_params(uuid)
-        if 'code' in recently_params and (recently_params['code'] == 404 or recently_params['code'] == 403):
-            print(recently_params)
-            return None, None
+        if 'code' in recently_params:
+            if recently_params['code'] == 404 or recently_params['code'] == 403:
+                return recently_params, None
+            elif recently_params['code'] == 401:
+                print('bar')
+                refresh_result = self.token_refresh()
+                if refresh_result:
+                    return self.get_recently_params_with_previous(uuid)
+                else:
+                    return {'code': 401, 'msg': 'Auth is outdated, please reauth'}
         else:
             previous_params = self.get_params_in_interval(
                 uuid, recently_params['timestamp'] - 600, recently_params['timestamp'])

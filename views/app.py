@@ -79,7 +79,7 @@ def app_box_first_date_handler(bot: Bot, update: Update, user_data: dict):
         return app_box_view(bot, update, user_data)
     else:
         try:
-            user_data['date_start'] = datetime.datetime.strptime(
+            user_data['start_date'] = datetime.datetime.strptime(
                 update.message.text, "%d/%m/%y")
         except ValueError:
             bot.send_message(
@@ -95,7 +95,7 @@ def app_box_second_date_handler(bot: Bot, update: Update, user_data: dict):
         return app_box_view(bot, update, user_data)
     else:
         try:
-            user_data['date_end'] = datetime.datetime.strptime(
+            user_data['end_date'] = datetime.datetime.strptime(
                 update.message.text, "%d/%m/%y")
         except ValueError:
             bot.send_message(
