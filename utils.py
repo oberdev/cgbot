@@ -215,10 +215,15 @@ def build_response(recently_params: dict, previous_params: dict, group):
 def app_box_recently_params(bot: Bot, update: Updater, user_data: dict):
     recently_params, previous_params = user_data['api'].get_recently_params_with_previous(
         user_data['active_box'])
+    message = ''
+    if 'code' in recently_params:
+        message = recently_params['msg']
+    else:
+        message = build_response(recently_params, previous_params,
+                                 user_data['api'].get_group_for_box(user_data['active_box']))
     bot.send_message(
         chat_id=update.message.chat_id,
-        text=build_response(recently_params, previous_params,
-                            user_data['api'].get_group_for_box(user_data['active_box'])),
+        text=message
     )
 
 
@@ -241,8 +246,17 @@ def app_box_second_date(bot: Bot, update: Updater, user_data: dict):
 
 
 def app_plotting_view(bot: Bot, update: Updater, user_data: dict):
-    bot.send_message(
-        chat_id=update.message.chat_id,
-        text=f'{user_data["end_date"]} {user_data["start_date"]}',
-    )
-    return app_box_view(bot, update, user_data)
+    start_date = user_data['start_date']
+    end_date = user_data['end_date']
+    if start_date > end_date:
+        bot.send_message(
+            chat_id=update.message.chat_id,
+            text='End date can\'t be sooner then start date, rewrite end date or press Cancel'
+        )
+        return APP_BOX_SECOND_DATE_HANDLE
+    else:
+        bot.send_message(
+            chat_id=update.message.chat_id,
+            text=f'{user_data["end_date"]} and {user_data["start_date"]}',
+        )
+        return app_box_view(bot, update, user_data)
