@@ -118,7 +118,7 @@ class CGApiClient(object):
         if results.status_code == 404:
             return DEFAULT_PROFILE
         elif results.status_code == 200:
-            return results.json()
+            return results.json()['profile']
 
     def get_recently_params_with_previous(self, uuid):
         recently_params: dict = self.get_recently_params(uuid)
