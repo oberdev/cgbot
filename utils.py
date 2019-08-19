@@ -24,6 +24,9 @@ EMOJI = {
     }
 }
 
+RECENTLY_PARAMS_KEYS = ['temperature', 'vibration',
+                        'noise_level', 'dust_concentration', 'light_level', 'light_ripple', 'co2_concentration', 'voc_concentration', 'magnetic_radiation', 'humidity']
+
 COLORS_LIST = ['purple', 'blue', 'green', 'yellow', 'red']
 REVERSE_COLORS_LIST = ['green', 'yellow', 'red']
 
@@ -198,14 +201,18 @@ def build_response(recently_params: dict, previous_params: dict, group):
     if not recently_params:
         return 'There is imposible to convert recently params to message'
     else:
+        print(group)
         message = ''
         message += f'Measurement data\n'
         message += f'{LABELS_OF_PARAMS["timestamp"]}: {datetime.fromtimestamp(recently_params["timestamp"])} {MEANS_OF_PARAMS["timestamp"]}\n'
         message += f'Climate parameters\n'
-        for key in recently_params.keys():
+        print(recently_params.keys())
+        for key in RECENTLY_PARAMS_KEYS:
+            # for key in recently_params.keys():
             if key != 'timestamp':
                 dynamic_sign = _get_compare_emoji(
                     recently_params[key], previous_params[key])
+                print(recently_params[key])
                 level_sign = _get_level_emoji(recently_params[key], group[key] if key not in [
                                               'dust_concentration', 'dust_concentration_pm1', 'dust_concentration_pm10'] else group['dust_concentration'])
                 message += f'{LABELS_OF_PARAMS[key]}: {level_sign} {recently_params[key]} {MEANS_OF_PARAMS[key]} {dynamic_sign}\n'
