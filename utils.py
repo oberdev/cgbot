@@ -25,7 +25,7 @@ EMOJI = {
 }
 
 RECENTLY_PARAMS_KEYS = ['temperature', 'vibration',
-                        'noise_level', 'dust_concentration', 'light_level', 'light_ripple', 'co2_concentration', 'voc_concentration', 'magnetic_radiation', 'humidity']
+                        'noise_level', 'dust_concentration', 'light_level', 'light_ripple', 'co2_concentration', 'voc_concentration', 'magnetic_radiation', 'humidity', 'dust_concentration', 'dust_concentration_pm1', 'dust_concentration_pm10']
 
 COLORS_LIST = ['purple', 'blue', 'green', 'yellow', 'red']
 REVERSE_COLORS_LIST = ['green', 'yellow', 'red']
@@ -201,7 +201,7 @@ def build_response(recently_params: dict, previous_params: dict, group):
     if not recently_params:
         return 'There is imposible to convert recently params to message'
     else:
-        print(group)
+        print(recently_params)
         message = ''
         message += f'Measurement data\n'
         message += f'{LABELS_OF_PARAMS["timestamp"]}: {datetime.fromtimestamp(recently_params["timestamp"])} {MEANS_OF_PARAMS["timestamp"]}\n'
