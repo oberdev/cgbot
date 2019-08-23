@@ -7,9 +7,11 @@ import datetime
 def app_main_menu(bot: Bot, update: Update, user_data: dict):
     if update.message.text == main_menu_buttons[0]:
         user_data['hierarchy'] = user_data['api'].get_hierarchy()
-        if not user_data['hierarchy']['buildings']:
+        if 'buildings' not in user_data['hierarchy']:
             app_empty_view(bot, update)
             return
+        elif 'code' in user_data['hierarchy'] and user_data['hierarchy']['code'] == 401:
+            bot.send_message(text=user_data['hierarchy']['msg'])
         else:
             return app_buildings_view(bot, update, user_data)
     if update.message.text == main_menu_buttons[1]:
@@ -44,10 +46,10 @@ def app_building_menu(bot: Bot, update: Update, user_data: dict):
 def app_boxes_menu(bot: Bot, update: Update, user_data: dict):
     if update.message.text == "Back":
         if user_data['from'] == 'buildings':
-            del user_data['from']
+            # del user_data['from']
             return app_building_view(bot, update, user_data)
         elif user_data['from'] == 'rooms':
-            del user_data['from']
+            # del user_data['from']
             return app_rooms_view(bot, update, user_data)
     elif update.message.text in user_data['boxes']:
         user_data['active_box'] = update.message.text

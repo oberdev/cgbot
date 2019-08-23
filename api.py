@@ -102,6 +102,12 @@ class CGApiClient(object):
 
     def get_hierarchy(self):
         results = self.api.get(f'{self.url}/user/objects/hierarchy')
+        if results.status_code == 401:
+            refresh_result = self.token_refresh()
+            if refresh_result:
+                return self.get_hierarchy()
+            else:
+                return {'code': 401, 'msg': 'Auth is outdated, please reauth'}
         return results.json()
 
     def get_recently_params(self, uuid):
@@ -126,7 +132,6 @@ class CGApiClient(object):
             if recently_params['code'] == 404 or recently_params['code'] == 403:
                 return recently_params, None
             elif recently_params['code'] == 401:
-                print('bar')
                 refresh_result = self.token_refresh()
                 if refresh_result:
                     return self.get_recently_params_with_previous(uuid)
