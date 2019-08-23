@@ -155,9 +155,17 @@ def app_boxes_view(bot: Bot, updater: Updater, user_data: dict, key='active_buil
 
 
 def app_box_view(bot: Bot, updater: Updater, user_data: dict):
+    recently_params, previous_params = user_data['api'].get_recently_params_with_previous(
+        user_data['active_box'])
+    message = ''
+    if 'code' in recently_params:
+        message = recently_params['msg']
+    else:
+        message = build_response(recently_params, previous_params,
+                                 user_data['api'].get_group_for_box(user_data['active_box']), user_data['active_box'])
     bot.send_message(
         chat_id=updater.message.chat_id,
-        text=f"The box_id is {user_data['active_box']}",
+        text=message,
         reply_markup=ReplyKeyboardMarkup(
             [[KeyboardButton(text=action) for action in box_actions_list], [KeyboardButton(text='Back')]])
     )
@@ -210,7 +218,7 @@ def build_response(recently_params: dict, previous_params: dict, group, box_name
         return 'There is imposible to convert recently params to message'
     else:
         message = ''
-        message += '' if box_name == '' else f'The box {box_name}'
+        message += '' if box_name == '' else f'The box_id is {box_name}\n'
         message += f'Measurement data\n'
         message += f'{LABELS_OF_PARAMS["timestamp"]}: {datetime.fromtimestamp(recently_params["timestamp"])} {MEANS_OF_PARAMS["timestamp"]}\n'
         message += f'Climate parameters\n'
