@@ -113,13 +113,20 @@ def app_building_view(bot: Bot, updater: Updater, user_data: dict):
         buttons.append('boxes')
     if 'rooms' in active_building:
         buttons.append('rooms')
-    bot.send_message(
-        chat_id=updater.message.chat_id,
-        text="Choose subject",
-        reply_markup=ReplyKeyboardMarkup(
-            [[KeyboardButton(text=button) for button in buttons], [KeyboardButton(text='Back')]])
-    )
-    return APP_BUILDING_CASES
+    if len(buttons) == 2:
+        bot.send_message(
+            chat_id=updater.message.chat_id,
+            text="Choose subject",
+            reply_markup=ReplyKeyboardMarkup(
+                [[KeyboardButton(text=button) for button in buttons], [KeyboardButton(text='Back')]])
+        )
+        return APP_BUILDING_CASES
+    elif len(buttons) == 1:
+        user_data['from'] = 'buildings_menu'
+        if buttons[0] == 'boxes':
+            return app_boxes_view(bot, updater, user_data)
+        if buttons[1] == 'rooms':
+            return app_rooms_view(bot, updater, user_data)
 
 
 def app_rooms_view(bot: Bot, updater: Updater, user_data: dict):
@@ -198,11 +205,12 @@ def _get_level_emoji(param: float, group_node: dict or list):
         return emoji_list[-1]
 
 
-def build_response(recently_params: dict, previous_params: dict, group):
+def build_response(recently_params: dict, previous_params: dict, group, box_name=''):
     if not recently_params:
         return 'There is imposible to convert recently params to message'
     else:
         message = ''
+        message += '' if box_name == '' else f'The box {box_name}'
         message += f'Measurement data\n'
         message += f'{LABELS_OF_PARAMS["timestamp"]}: {datetime.fromtimestamp(recently_params["timestamp"])} {MEANS_OF_PARAMS["timestamp"]}\n'
         message += f'Climate parameters\n'

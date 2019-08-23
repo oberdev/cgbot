@@ -51,6 +51,8 @@ def app_boxes_menu(bot: Bot, update: Update, user_data: dict):
         elif user_data['from'] == 'rooms':
             # del user_data['from']
             return app_rooms_view(bot, update, user_data)
+        elif user_data['from'] == 'buildings_menu':
+            return app_buildings_view(bot, update, user_data)
     elif update.message.text in user_data['boxes']:
         user_data['active_box'] = update.message.text
         return app_box_view(bot, update, user_data)
