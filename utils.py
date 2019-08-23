@@ -1,6 +1,7 @@
 from telegram.ext import Updater
 from telegram import Bot, KeyboardButton, ReplyKeyboardMarkup
 from views_codes import APP_BUILDINGS_CASES, APP_BUILDING_CASES, APP_BOXES_CASES, APP_ROOMS_CASES, APP_BOX_ACTIONS, APP_BOX_FIRST_DATE_HANDLE, APP_BOX_SECOND_DATE_HANDLE
+from libs.plot import build_plots
 from datetime import datetime
 
 main_menu_buttons = ["Buildings", "Settings"]
@@ -259,8 +260,11 @@ def app_plotting_view(bot: Bot, update: Updater, user_data: dict):
         )
         return APP_BOX_SECOND_DATE_HANDLE
     else:
+        # plotting_result = build_plots(user_data['api'].get_params_in_interval(
+        #     user_data['active_box'], int(start_date.timestamp()), int(end_date.timestamp())))
         bot.send_message(
             chat_id=update.message.chat_id,
-            text=f'{user_data["end_date"]} and {user_data["start_date"]}',
+            text=f'sample'
+            #            text=plotting_result['msg'] if 'msg' in plotting_result else None,
         )
         return app_box_view(bot, update, user_data)
