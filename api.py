@@ -139,7 +139,7 @@ class CGApiClient(object):
                     return {'code': 401, 'msg': 'Auth is outdated, please reauth'}
         else:
             previous_params = self.get_params_in_interval(
-                uuid, recently_params['timestamp'] - 600, recently_params['timestamp'])
+                uuid, recently_params['timestamp'] - 1200, recently_params['timestamp'])
             if not 'code' in previous_params and 'timestamp' in previous_params and len(previous_params['timestamp']) > 1:
                 true_previous_params = {
                     key: previous_params[key][1] for key in recently_params.keys()}
