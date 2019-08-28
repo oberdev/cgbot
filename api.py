@@ -121,6 +121,7 @@ class CGApiClient(object):
 
     def get_group_for_box(self, uuid):
         results = self.api.get(f'{self.url}/user/box/{uuid}/profile')
+        print(results.json())
         if results.status_code == 404:
             return DEFAULT_PROFILE
         elif results.status_code == 200:

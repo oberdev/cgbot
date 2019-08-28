@@ -6,22 +6,14 @@ from utils import app_user_view
 
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Bot, Update
 
-button_list = [
-    [
-        InlineKeyboardButton("authenticate", callback_data="authenticate")
-    ]
-]
 
-markup = InlineKeyboardMarkup(button_list)
-
-
-def auth_invite(bot: Bot, update: Update):
+def auth_invite(bot: Bot, update: Update, user_data: dict):
     bot.send_message(
         reply_to_message_id=update.message.message_id,
         chat_id=update.message.chat_id,
         text="I'm a bot, please talk to me!",
-        reply_markup=markup
     )
+    return auth_username(bot, update, user_data)
 
 
 def auth_username(bot: Bot, update: Updater, user_data: dict):

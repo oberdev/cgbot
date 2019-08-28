@@ -198,17 +198,22 @@ def _get_level_emoji(param: float, group_node: dict or list):
                       for key in REVERSE_COLORS_LIST]
         individual_scale = dict(zip(values_list, emoji_list))
         temp_list = list(individual_scale.items())
+        print(individual_scale)
+        print(temp_list)
         for value, _ in temp_list[::-1]:
-            if value < param:
+            if value <= param:
                 return individual_scale[value]
         return emoji_list[0]
     elif type(group_node) is list:
         values_list = group_node
+        values_list.insert(0, -float('inf'))
         emoji_list = [EMOJI['colors'][key] for key in COLORS_LIST]
         individual_scale = dict(zip(values_list, emoji_list))
         temp_list = list(individual_scale.items())
+        print(individual_scale)
+        print(temp_list[::-1])
         for value, _ in temp_list[::-1]:
-            if value > param:
+            if value <= param:
                 return individual_scale[value]
         return emoji_list[-1]
 

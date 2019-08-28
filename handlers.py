@@ -5,10 +5,10 @@ from views.app import app_main_menu, app_building_menu, app_buildings_menu, app_
 
 
 app_conv_handler = ConversationHandler(
-    allow_reentry=True,
-    entry_points=[CallbackQueryHandler(
-        auth_username, pattern="authenticate", pass_user_data=True)],
+    entry_points=[MessageHandler(Filters.all,
+                                 auth_invite, pass_user_data=True)],
     states={
+        AUTH_USERNAME: [MessageHandler(Filters.text, auth_username, pass_user_data=True)],
         AUTH_PASSWORD: [MessageHandler(Filters.text, auth_password, pass_user_data=True)],
         AUTH_VALIDATION: [MessageHandler(Filters.text, auth_validation, pass_user_data=True)],
         APP_MENU_CASES: [RegexHandler(
@@ -29,6 +29,5 @@ app_conv_handler = ConversationHandler(
             Filters.text, app_box_second_date_handler, pass_user_data=True)],
     },
     fallbacks=[],
+    allow_reentry=False
 )
-
-start_handler = CommandHandler('start', auth_invite)
