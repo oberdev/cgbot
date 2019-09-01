@@ -29,7 +29,7 @@ RECENTLY_PARAMS_KEYS = ['temperature', 'vibration',
                         'noise_level', 'light_level', 'light_ripple', 'co2_concentration', 'voc_concentration', 'magnetic_radiation', 'humidity', 'dust_concentration_pm1', 'dust_concentration', 'dust_concentration_pm10']
 
 COLORS_LIST = ['purple', 'blue', 'green', 'yellow', 'red']
-REVERSE_COLORS_LIST = ['green', 'yellow', 'red']
+REVERSE_COLORS_LIST = ['green', 'orange', 'red']
 
 LABELS_OF_PARAMS = {
     'timestamp': 'Measuring time',
