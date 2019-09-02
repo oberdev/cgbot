@@ -89,8 +89,7 @@ def app_user_view(bot: Bot, updater: Updater):
 def app_empty_view(bot: Bot, updater: Updater):
     bot.send_message(
         chat_id=updater.message.chat_id,
-        text="There are no content to show",
-        # reply_markup=markup
+        text="There are no content to show"
     )
 
 
@@ -201,11 +200,11 @@ def _get_level_emoji(param: float, group_node: dict or list):
         print(individual_scale)
         print(temp_list)
         for value, _ in temp_list[::-1]:
-            if value <= param:
+            if value < param:
                 return individual_scale[value]
         return emoji_list[0]
     elif type(group_node) is list:
-        values_list = group_node
+        values_list = group_node.copy()
         values_list.insert(0, -float('inf'))
         emoji_list = [EMOJI['colors'][key] for key in COLORS_LIST]
         individual_scale = dict(zip(values_list, emoji_list))
@@ -213,12 +212,15 @@ def _get_level_emoji(param: float, group_node: dict or list):
         print(individual_scale)
         print(temp_list[::-1])
         for value, _ in temp_list[::-1]:
-            if value <= param:
+            if value < param:
                 return individual_scale[value]
         return emoji_list[-1]
 
 
 def build_response(recently_params: dict, previous_params: dict, group, box_name=''):
+    print('recently params', recently_params)
+    print('previous params', previous_params)
+    print('group', group)
     if not recently_params:
         return 'There is imposible to convert recently params to message'
     else:
