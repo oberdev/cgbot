@@ -18,11 +18,20 @@ class CGApiClient(object):
             self.api.headers['Authorization'] = f'Bearer {self.token}'
         self.refresh_token = refresh_token
 
+    def json(self, response: requests.Response):
+        try:
+            result = response.json()
+        except json.decoder.JSONDecodeError:
+            return False
+        else:
+            return result
+
     def token_obtain(self, username, password):
         result = self.api.post(f'{self.url}/user/login_check', json={
             "username": username,
             "password": password
         })
+        print(type(result) == requests.Response)
         if result.status_code == 401:
             return {'error': result.json()['message']}
         else:
