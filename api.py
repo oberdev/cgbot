@@ -54,8 +54,8 @@ class CGApiClient(object):
             return True
 
     def get_hierarchy(self):
-        results = self.api.get(f'{self.url}/user/objects/hierarchy')
-        if results.status_code == 401:
+        result = self.api.get(f'{self.url}/user/objects/hierarchy')
+        if result.status_code == 401:
             refresh_result = self.token_refresh()
             if refresh_result:
                 return self.get_hierarchy()
@@ -69,15 +69,13 @@ class CGApiClient(object):
 
     def get_params_in_interval(self, uuid, startstamp, endstamp):
         results = self.api.get(
-            f'{self.url}/user/box/{uuid}/measures/since/{startstamp}/till/{endstamp}')
+            f'{self.url}/user/box/{uuid}/mean_measures/since/{startstamp}/till/{endstamp}')
         return results.json()
 
     def get_group_for_box(self, uuid):
         results = self.api.get(f'{self.url}/user/box/{uuid}/profile')
-        print(results.json())
-        if results.status_code == 404:
-            return DEFAULT_PROFILE
-        elif results.status_code == 200:
+        print(results.content)
+        if results.status_code == 200:
             return results.json()['profile']
 
     def get_recently_params_with_previous(self, uuid):
