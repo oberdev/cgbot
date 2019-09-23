@@ -2,62 +2,6 @@ import requests
 import json
 BASE_URL = 'https://api.climateguard.info/api'
 
-DEFAULT_PROFILE = {
-    'temperature': [
-        18,
-        23,
-        25,
-        26,
-    ],
-    'vibration': {
-        "1": 0,
-        "2": 1.3,
-        "3": 1.4
-    },
-    "noise_level": {
-        "1": 0,
-        "2": 50,
-        "3": 80
-    },
-    "dust_concentration": {
-        "1": 0,
-        "2": 0.16,
-        "3": 0.15
-    },
-    "light_level": [
-        50,
-        100,
-        550,
-        750
-    ],
-    "light_ripple": {
-        "1": 0,
-        "2": 25,
-        "3": 50
-    },
-    "co2_concentration": {
-        "1": 0,
-        "2": 600,
-        "3": 1000
-    },
-    "voc_concentration": {
-        "1": 0,
-        "2": 1,
-        "3": 40
-    },
-    "magnetic_radiation": {
-        "1": 0,
-        "2": 100,
-        "3": 500
-    },
-    "humidity": [
-        30,
-        37.5,
-        45,
-        60
-    ],
-}
-
 
 class CGApiClient(object):
 

@@ -162,6 +162,7 @@ def app_box_view(bot: Bot, updater: Updater, user_data: dict):
     else:
         message = build_response(recently_params, previous_params,
                                  user_data['api'].get_group_for_box(user_data['active_box']), user_data['active_box'])
+
     bot.send_message(
         chat_id=updater.message.chat_id,
         text=message,
@@ -218,9 +219,6 @@ def _get_level_emoji(param: float, group_node: dict or list):
 
 
 def build_response(recently_params: dict, previous_params: dict, group, box_name=''):
-    print('recently params', recently_params)
-    print('previous params', previous_params)
-    print('group', group)
     if not recently_params:
         return 'There is imposible to convert recently params to message'
     else:
@@ -283,8 +281,10 @@ def app_plotting_view(bot: Bot, update: Updater, user_data: dict):
         )
         return APP_BOX_SECOND_DATE_HANDLE
     else:
-        # plotting_result = build_plots(user_data['api'].get_params_in_interval(
-        #     user_data['active_box'], int(start_date.timestamp()), int(end_date.timestamp())))
+        user_data['api'].test_query(user_data['active_box'], int(
+            start_date.timestamp()), int(end_date.timestamp()))
+        plotting_result = build_plots(user_data['api'].get_params_in_interval(
+            user_data['active_box'], int(start_date.timestamp()), int(end_date.timestamp())))
         bot.send_message(
             chat_id=update.message.chat_id,
             text=f'sample'

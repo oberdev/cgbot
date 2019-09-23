@@ -1,3 +1,4 @@
+from api import CGApiClient
 from updater import dispatcher, updater
 from handlers import app_conv_handler
 import logging
