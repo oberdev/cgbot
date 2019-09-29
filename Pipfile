@@ -11,6 +11,9 @@ pylint = "*"
 python-telegram-bot = "*"
 requests = "*"
 python-dotenv = "*"
+emoji = "*"
+numpy = "*"
+matplotlib = "*"
 
 [requires]
 python_version = "3.7"

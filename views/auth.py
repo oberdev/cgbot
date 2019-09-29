@@ -6,22 +6,15 @@ from utils import app_user_view
 
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Bot, Update
 
-button_list = [
-    [
-        InlineKeyboardButton("authenticate", callback_data="authenticate")
-    ]
-]
 
-markup = InlineKeyboardMarkup(button_list)
-
-
-def auth_invite(bot: Bot, update: Update):
+def auth_invite(bot: Bot, update: Update, user_data: dict):
+    user_data = {}
     bot.send_message(
         reply_to_message_id=update.message.message_id,
         chat_id=update.message.chat_id,
         text="I'm a bot, please talk to me!",
-        reply_markup=markup
     )
+    return auth_username(bot, update, user_data)
 
 
 def auth_username(bot: Bot, update: Updater, user_data: dict):
@@ -48,7 +41,6 @@ def auth_validation(bot: Bot, update: Updater, user_data: dict):
     user_data['api'] = CGApiClient()
     auth_result = user_data['api'].token_obtain(
         user_data['username'], user_data['password'])
-    print(auth_result)
     if 'error' in auth_result:
         bot.send_message(
             chat_id=update.message.chat_id,
@@ -62,3 +54,11 @@ def auth_validation(bot: Bot, update: Updater, user_data: dict):
         del user_data['password']
         app_user_view(bot, update)
         return APP_MENU_CASES
+
+
+def logout(bot: Bot, update: Updater):
+    bot.send_message(
+        chat_id=update.message.chat_id,
+        text='Successful logout. If you want login again send /start command'
+    )
+    return ConversationHandler.END
