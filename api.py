@@ -1,6 +1,28 @@
 import requests
-import json
 BASE_URL = 'https://api.climateguard.info/api'
+
+
+def is_unhandleable_error(response: requests.Response):
+    return response.status_code >= 500
+
+
+def is_handleable_error(response: requests.Response):
+    return response.status_code >= 400
+
+
+def process_response(response, callback_action, callback_refresh=None, original_function=None, params: dict={}):
+    if is_unhandleable_error(response):
+        return False
+    elif is_handleable_error(response):
+        error = response.json()
+        if callback_refresh and original_function and error['message'] == 'Expired JWT Token':
+            refresh_result = callback_refresh()
+            if refresh_result:
+                return original_function(**params)
+        else:
+            return error
+    else:
+        return callback_action(response)
 
 
 class CGApiClient(object):
@@ -18,28 +40,19 @@ class CGApiClient(object):
             self.api.headers['Authorization'] = f'Bearer {self.token}'
         self.refresh_token = refresh_token
 
-    def json(self, response: requests.Response):
-        try:
-            result = response.json()
-        except json.decoder.JSONDecodeError:
-            return False
-        else:
-            return result
-
     def token_obtain(self, username, password):
-        result = self.api.post(f'{self.url}/user/login_check', json={
+        response = self.api.post(f'{self.url}/user/login_check', json={
             "username": username,
             "password": password
         })
-        print(type(result) == requests.Response)
-        if result.status_code == 401:
-            return {'error': result.json()['message']}
-        else:
-            data = result.json()
-            self.refresh_token = data['refresh_token']
-            self.token = data['token']
-            self.api.headers['Authorization'] = f'Bearer {self.token}'
-            return data
+        return process_response(response, self._token_obtain_process)
+
+    def _token_obtain_process(self, response: requests.Response):
+        result = response.json()
+        self.refresh_token = result['refresh_token']
+        self.token = result['token']
+        self.api.headers['Authorization'] = f'Bearer {self.token}'
+        return result
 
     def token_refresh(self):
         result = self.api.post(f'{self.url}/user/token/refresh', json={
@@ -54,29 +67,24 @@ class CGApiClient(object):
             return True
 
     def get_hierarchy(self):
-        result = self.api.get(f'{self.url}/user/objects/hierarchy')
-        if result.status_code == 401:
-            refresh_result = self.token_refresh()
-            if refresh_result:
-                return self.get_hierarchy()
-            else:
-                return {'code': 401, 'msg': 'Auth is outdated, please reauth'}
-        return results.json()
+        response = self.api.get(f'{self.url}/user/objects/hierarchy')
+        return process_response(response, lambda x: x.json(), self.token_refresh, self.get_hierarchy)
 
     def get_recently_params(self, uuid):
-        results = self.api.get(f'{self.url}/user/box/{uuid}/last_measures')
-        return results.json()
+        response = self.api.get(f'{self.url}/user/box/{uuid}/last_measures')
+        return process_response(response, lambda x: x.json(), self.token_refresh, self.get_recently_params,
+                                {'uuid': uuid})
 
-    def get_params_in_interval(self, uuid, startstamp, endstamp):
-        results = self.api.get(
-            f'{self.url}/user/box/{uuid}/mean_measures/since/{startstamp}/till/{endstamp}')
-        return results.json()
+    def get_params_in_interval(self, uuid, start_timestamp, end_timestamp):
+        response = self.api.get(
+            f'{self.url}/user/box/{uuid}/mean_measures/since/{start_timestamp}/till/{end_timestamp}')
+        return process_response(response, lambda x: x.json(), self.token_refresh, self.get_params_in_interval,
+                                {'uuid': uuid, 'start_timestamp': start_timestamp, 'end_timestamp': end_timestamp})
 
     def get_group_for_box(self, uuid):
-        results = self.api.get(f'{self.url}/user/box/{uuid}/profile')
-        print(results.content)
-        if results.status_code == 200:
-            return results.json()['profile']
+        response = self.api.get(f'{self.url}/user/box/{uuid}/profile')
+        return process_response(response, lambda x: x.json()['profile'], self.token_refresh, self.get_group_for_box,
+                                {'uuid': uuid})
 
     def get_recently_params_with_previous(self, uuid):
         recently_params: dict = self.get_recently_params(uuid)

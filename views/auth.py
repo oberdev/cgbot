@@ -1,10 +1,8 @@
-from telegram.ext import Updater, ConversationHandler, CallbackQueryHandler, MessageHandler, Filters
-from telegram import Bot
+from telegram.ext import ConversationHandler
 from api import CGApiClient
-from views_codes import AUTH_USERNAME, AUTH_PASSWORD, AUTH_VALIDATION, APP_MENU_CASES
+from constants import AUTH_PASSWORD, AUTH_VALIDATION, APP_MENU_CASES
 from utils import app_user_view
-
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Bot, Update
+from telegram import Bot, Update
 
 
 def auth_invite(bot: Bot, update: Update, user_data: dict):
@@ -14,10 +12,10 @@ def auth_invite(bot: Bot, update: Update, user_data: dict):
         chat_id=update.message.chat_id,
         text="I'm a bot, please talk to me!",
     )
-    return auth_username(bot, update, user_data)
+    return auth_user(bot, update, user_data)
 
 
-def auth_username(bot: Bot, update: Updater, user_data: dict):
+def auth_user(bot: Bot, update: Update, user_data: dict):
     user_data.clear()
     query = update.callback_query if update.callback_query else update
     bot.send_message(
@@ -27,7 +25,7 @@ def auth_username(bot: Bot, update: Updater, user_data: dict):
     return AUTH_PASSWORD
 
 
-def auth_password(bot: Bot, update: Updater, user_data: dict):
+def auth_password(bot: Bot, update: Update, user_data: dict):
     user_data['username'] = update.message.text
     bot.send_message(
         chat_id=update.message.chat_id,
@@ -36,19 +34,18 @@ def auth_password(bot: Bot, update: Updater, user_data: dict):
     return AUTH_VALIDATION
 
 
-def auth_validation(bot: Bot, update: Updater, user_data: dict):
+def auth_validation(bot: Bot, update: Update, user_data: dict):
     user_data['password'] = update.message.text
     user_data['api'] = CGApiClient()
     auth_result = user_data['api'].token_obtain(
         user_data['username'], user_data['password'])
-    if 'error' in auth_result:
+    if 'message' in auth_result:
         bot.send_message(
             chat_id=update.message.chat_id,
-            text=auth_result['error']
+            text=auth_result['message']
         )
         user_data.clear()
-        auth_username(bot, update, user_data)
-        return AUTH_PASSWORD
+        return auth_user(bot, update, user_data)
     else:
         del user_data['username']
         del user_data['password']
@@ -56,7 +53,7 @@ def auth_validation(bot: Bot, update: Updater, user_data: dict):
         return APP_MENU_CASES
 
 
-def logout(bot: Bot, update: Updater):
+def logout(bot: Bot, update: Update):
     bot.send_message(
         chat_id=update.message.chat_id,
         text='Successful logout. If you want login again send /start command'

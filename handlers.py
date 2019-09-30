@@ -1,14 +1,14 @@
-from telegram.ext import Updater, ConversationHandler, CallbackQueryHandler, MessageHandler, Filters, CommandHandler, InlineQueryHandler, Handler, RegexHandler
+from telegram.ext import MessageHandler, Filters, CommandHandler, RegexHandler
 from views.auth import *
-from views_codes import *
-from views.app import app_main_menu, app_building_menu, app_buildings_menu, app_boxes_menu, app_rooms_menu, app_box_actions, app_box_first_date, app_box_first_date_handler, app_box_second_date_handler
-
+from constants import *
+from views.menus import app_main_menu, app_building_menu, app_buildings_menu, app_boxes_menu, app_rooms_menu, \
+    app_box_actions, app_box_first_date_handler, app_box_second_date_handler
 
 app_conv_handler = ConversationHandler(
     entry_points=[MessageHandler(
         Filters.all, auth_invite, pass_user_data=True)],
     states={
-        AUTH_USERNAME: [MessageHandler(Filters.text, auth_username, pass_user_data=True)],
+        AUTH_USERNAME: [MessageHandler(Filters.text, auth_user, pass_user_data=True)],
         AUTH_PASSWORD: [MessageHandler(Filters.text, auth_password, pass_user_data=True)],
         AUTH_VALIDATION: [MessageHandler(Filters.text, auth_validation, pass_user_data=True)],
         APP_MENU_CASES: [RegexHandler(
