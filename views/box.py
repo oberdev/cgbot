@@ -67,14 +67,19 @@ def app_plotting_view(bot: Bot, update: Update, user_data: dict):
         )
         return APP_BOX_SECOND_DATE_HANDLE
     else:
-        user_data['api'].test_query(user_data['active_box'], int(
-            start_date.timestamp()), int(end_date.timestamp()))
-        plotting_result = build_plots(user_data['api'].get_params_in_interval(
-            user_data['active_box'], int(start_date.timestamp()), int(end_date.timestamp())))
-        bot.send_message(
-            chat_id=update.message.chat_id,
-            text=f'sample'
-            #            text=plotting_result['msg'] if 'msg' in plotting_result else None,
-        )
+        data = user_data['api'].get_params_in_interval(
+            user_data['active_box'], int(start_date.timestamp()), int(end_date.timestamp()))
+        plotting_result = build_plots(data)
+        if plotting_result['is_success']:
+            for photo in plotting_result['data']:
+                bot.send_photo(
+                    chat_id=update.message.chat_id,
+                    photo=photo,
+                )
+        else:
+            bot.send_message(
+                chat_id=update.message.chat_id,
+                text=plotting_result['msg']
+            )
         return app_box_view(bot, update, user_data)
 
