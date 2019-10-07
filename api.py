@@ -15,7 +15,7 @@ def process_response(response, callback_action, callback_refresh=None, original_
         return False
     elif is_handleable_error(response):
         error = response.json()
-        if callback_refresh and original_function and error['message'] == 'Expired JWT Token':
+        if callback_refresh and original_function and error['msg'] == 'Expired JWT Token':
             refresh_result = callback_refresh()
             if refresh_result:
                 return original_function(**params)
