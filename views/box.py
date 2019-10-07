@@ -28,7 +28,6 @@ def app_box_second_date(bot: Bot, update: Update, user_data: dict):
 def app_box_view(bot: Bot, update: Update, user_data: dict):
     recently_params, previous_params = user_data['api'].get_recently_params_with_previous(
         user_data['active_box'])
-    message = ''
     if 'code' in recently_params:
         message = recently_params['msg']
     else:
